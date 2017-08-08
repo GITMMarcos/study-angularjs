@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="pt-br" ng-app="Aula5">
+<html lang="pt-br" ng-app="Aula6">
     <head>
         <meta charset="utf-8" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
        
-        <title>Projeto Angular</title>
+        <title>Projeto Angular - {{ titulo }}</title>
 
-        <link href="..\css\bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -22,9 +22,10 @@
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript">
 
-            var module = angular.module("Aula5", []);
-            module.controller("MeuQuartoController", function($scope){
+            var module = angular.module("Aula6", []);
+            module.controller("MeuSextoController", function($rootScope, $scope, $http){
                 
+                $rootScope.titulo = "Aula 6";
                 $scope.nomeListaPessoa = "Lista de Pessoas";
                 $scope.listaPessoa = [];
                 $scope.frmInclusaoNome = new Object();
@@ -57,17 +58,36 @@
                     $scope.listaPessoa = novaListaDePessoas;
                 };
 
+                $scope.carregarPessoas = function(){
+                    
+                    $scope.carregandoPessoas = true;
+
+                    $http({
+                        url: "pessoas.json"
+                        ,method: "GET"
+                    }).then(function(resposta){
+                       $scope.listaPessoa = resposta.data; 
+                    },
+                    function(resposta){
+                        alert("erro");
+                    }).finally(function(){
+                        $scope.carregandoPessoas = false;
+                    });
+
+                };
+
             });
 
         </script>
     </head>
 
-    <body ng-controller="MeuQuartoController">
+    <body ng-controller="MeuSextoController">
         <div class="container">
             <div class="jumbotron">
-                <h1>Aula5</h1> 
+                <h1>{{ titulo }}</h1> 
 
                 <p><a class="btn btn-primary btn-lg" ng-hide="exibirFormularioInclusao" ng-click="exibirFormularioInclusao = true;" href="#">Cadastrar</a></p>
+                <p><a class="btn btn-primary btn-lg" ng-disabled="carregandoPessoas" ng-click="carregarPessoas();" href="#">Cadastrar Pessoas AJAX</a></p>
             </div>
 
             <div class="panel panel-default" ng-show="exibirFormularioInclusao">
